@@ -1,17 +1,20 @@
 import {
+  BeforeInsert,
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 import { Tag } from './tag.entity';
 
 @Entity('courses')
 export class Course {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;
@@ -24,4 +27,16 @@ export class Course {
     cascade: true,
   })
   tags: Tag[];
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createAt: Date;
+
+  @BeforeInsert()
+  generateId() {
+    if (this.id) {
+      return;
+    }
+
+    this.id = uuid();
+  }
 }
